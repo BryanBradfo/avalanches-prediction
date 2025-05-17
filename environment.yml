@@ -1,0 +1,12 @@
+name: ramp-template-kit
+channels:
+  - conda-forge
+dependencies:
+  - joblib
+  - matplotlib
+  - numpy
+  - pandas
+  - scikit-learn>=1.4
+  - pip
+  - pip:
+    - ramp-workflow

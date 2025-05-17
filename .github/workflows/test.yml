@@ -1,0 +1,95 @@
+name: Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Cancel in-progress workflows when pushing
+# a new commit on the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test_kit:
+    name: Test
+    runs-on: ubuntu-latest
+    env:
+      CONDA_ENV: 'testcondaenv'
+
+    defaults:
+      run:
+        # Need to use this shell to get cond working properly.
+        # See https://github.com/marketplace/actions/setup-miniconda#important
+        shell: 'bash -l {0}'
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache the data
+      uses: actions/cache@v4
+      with:
+        key: data-${{ hashFiles('**/download_data.py') }}
+        path: ./data
+
+    - name: Setup Conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: ${{ env.CONDA_ENV }}
+        python-version: "3.10"
+        # Use miniforge to only get conda-forge as default channel.
+        miniforge-version: latest
+
+    - name: Install the ramp-kit's dependencies
+      run: pip install -r requirements.txt
+
+    - name: Download data
+      run: python download_data.py
+
+    - name: Ramp test
+      run: ramp-test
+
+  flake8:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: pip install flake8
+    - name: Flake8 linter
+      run: flake8 .
+
+  nbconvert:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Cache the data
+      uses: actions/cache@v4
+      with:
+        key: data-${{ hashFiles('**/download_data.py') }}
+        path: ./data
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        pip install seaborn nbconvert[test]
+        pip install -r requirements.txt
+
+    - name: Download data
+      run: python download_data.py
+
+    - name: Check the starting-kit notebook
+      run: jupyter nbconvert --execute template_starting_kit.ipynb --to html --ExecutePreprocessor.kernel_name=python3

@@ -1,0 +1,11 @@
+ramp-workflow
+numpy
+pandas
+matplotlib
+seaborn
+plotly
+nbformat
+scikit-learn
+geopandas
+folium
+branca
