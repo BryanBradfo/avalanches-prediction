@@ -2,7 +2,7 @@
 
 **Authors:** Florent BLANC, Bryan CHEN, Sibylle DEGOS, Alice DEVILDER, Rémy GRABET, Théo PAQUIER
 
-<!-- [![Build status](https://github.com/ramp-kits/template-kit/actions/workflows/test.yml/badge.svg)](https://github.com/ramp-kits/template-kit/actions/workflows/test.yml) -->
+![Avalanche risk prediction Wallpaper](img/avalanche.jpg)
 
 ## Introduction
 
